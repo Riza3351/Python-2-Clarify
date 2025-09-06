@@ -9,7 +9,7 @@
 # Versão 0.0.1v 09-2025 
 
 # Caminho da pasta 
-DB_PATH = "C:/Users/noturno/Desktop/Python 2 Felipe S Correa/" 
+DB_PATH = "C:/Users/noturno/Desktop/Riza3351-main/"
 NOMEBANCO = "bancoDeElite.db"
 TABELA_A  = 'drinks.csv'
 TABELA_B  = 'avengers.csv'
