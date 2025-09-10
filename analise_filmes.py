@@ -28,18 +28,18 @@ def index():
 def grafico():
     df = carregar_df()
     # tira as notas nulas e arredonda para reduzir o ruido
-    df = df.dropna(subset=["Nota"].copy()) 
+    df = df.dropna(subset=["Nota"]).copy()
     df["Nota_arred"] = df['Nota'].round(1)
 
     # contar quantos filmes por nota
     base = (
-        df.groupby("Nota_arred", as_index="False") 
+        df.groupby("Nota_arred", as_index=False) 
         .agg(Qtd = ("Titulo", "count")).sort_values("Nota_arred")
     )
 
     # se a tabela esta vaiza cai nesse retunr
     if base.empty:
-        return render_template_string("<h2>Sem dados de notas para plotar<h2>") 
+        return render_template_string("<h2>Sem dados de notas para plotar</h2>") 
     fig = px.scatter(
         base, 
         x = "Nota_arred",
@@ -63,7 +63,7 @@ def tabela():
     df = carregar_df() 
 
     total_filmes = len(df) 
-    notas_validas = df['Nota'].dropna() if "Nota" in df. columns else pd.Series([]) 
+    notas_validas = df['Nota'].dropna() if "Nota" in df.columns else pd.Series([])(dtype=float) 
 
     media_nota = round(notas_validas.mean(), 2) if not notas_validas.empty else None
     mediana_nota = round(notas_validas.median(), 2) if not notas_validas.empty else None
@@ -86,7 +86,7 @@ def tabela():
         <h3>Tabela completa</h3>
         <div> {{tabela|safe}}</div>
     """
-    return  render_template_string(html, stats = stats_html, tabela=tabela_html)
+    return  render_template_string(html, stats=stats_html, tabela=tabela_html)
 
 @app.route('/filmes_diretor')
 def filmes_diretor():
@@ -131,7 +131,7 @@ def filmes_diretor():
             </div>
         </div>
     """
-    return render_template_string(html, grafico_html)
+    return render_template_string(html, grafico=grafico_html)
 
 if __name__ == '__main__':
     app.run(debug=True)
