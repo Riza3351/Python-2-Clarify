@@ -20,7 +20,7 @@ card_temp_min = 1
 card_temp_max = 3
 pag_temp_min = 2
 pag_temp_max = 4 
-paginaLimite = 2 # limite de paginas 
+paginaLimite = 40 # limite de paginas 
 bancoDados = "filmes.db" 
 saidaCSV = f"filmes_adorocinema_{data_hoje}.csv"
 
@@ -41,7 +41,7 @@ for pagina in range(1, paginaLimite +1):
             # captura o titulo do filme e o hiperlink da pagina do filme
             titulo_tag = card.find("a", class_="meta-title-link")
             titulo = titulo_tag.text.strip() if titulo_tag else "N/A"
-            link = "https://www.adorocinema.com/" + titulo_tag['href'] if titulo_tag else None 
+            link = "https://www.adorocinema.com" + titulo_tag['href'] if titulo_tag else None 
             # captura a nota do filme
             nota_tag = card.find("span", class_="stareval-note")
             nota = nota_tag.text.strip().replace(',','.') if nota_tag else "N/A" 
@@ -62,7 +62,7 @@ for pagina in range(1, paginaLimite +1):
                         diretor = (
                             diretor_tag.text 
                             .strip()
-                            .replace('Direção:','')
+                            .replace('Direcao:','')
                             .replace(',','')
                             .replace('|','')
                             .replace('\n','')
@@ -88,11 +88,11 @@ for pagina in range(1, paginaLimite +1):
             if titulo != "N/A" and link is not None and nota != "N/A": 
                 filmes.append({
                     "Titulo": titulo , 
-                    "Direção": diretor, 
+                    "Direcao": diretor, 
                     "Nota": nota, 
                     "Link": link,
                     "Ano": ano,  
-                    "Categora": categoria
+                    "Categoria": categoria
                 }) 
             else:
                 print(f"Filme incompleto ou erro na coleta de dados{titulo}") 
@@ -117,42 +117,43 @@ df.to_csv(saidaCSV, index=False, encoding='utf-8-sig', quotechar="'", quoting=1)
 
 
 with sqlite3.connect(bancoDados) as conn: 
-    coursor = conn.cursor()
+    cursor = conn.cursor()
 
-    coursor.execute(''' 
-        CREATE TABLE IF NOT EXISTS filmes(
-            Id INTERGER PRIMARY KEY AUTOINCREMENTE,
+    cursor.execute(''' 
+        CREATE TABLE IF NOT EXISTS filmes (
+            Id INTEGER PRIMARY KEY AUTOINCREMENT,
             Titulo TEXT,
             Direcao TEXT,
             Nota REAL,
             Link TEXT UNIQUE,
             Ano TEXT,
             Categoria TEXT
-        )
+        )             
     ''')
 
-for filme in filmes:
-    try:
-        coursor.execute('''
+    for filme in filmes:
+        try:
+            cursor.execute('''
             INSERT OR IGNORE INTO filmes (Titulo, Direcao, Nota, Link, Ano, Categoria) VALUES (?,?,?,?,?,?)
         ''',(
             filme['Titulo'], 
-            filme['Direção'], 
+            filme['Direcao'], 
             float(filme['Nota']) if filme['Nota'] != 'N/A' else None, 
             filme['Link'], 
             filme['Ano'], 
-            filme['Categoria'],
+            filme['Categoria']
         ))
-    except Exception as erro:
-        print(f'Erro ao inserir filme {filme['Titulo']} no banco de dados. \nDetalhes: {erro}')
+        except Exception as erro:
+            print(f"Erro ao inserir filme '{filme['Titulo']}' no banco de dados. \nDetalhes: {erro}")
     conn.commit() 
-    conn.close()
+
 
 
 termino = datetime.datetime.now()
 print("-------------------------------------------------")
 print("Dados raspados e salvos com sucesso")
 print(f"\nArquivo CSV salvo em: {saidaCSV}")
+print(f"\nDados armazenados no banco de dados {bancoDados}")
 print(f"\nObrigado por uar o Sistema de Bot FilmBot ")
 print(f"\nIniciado em: {inicio.strftime('%H:%M:%S')}")
 print(f"\nFinalizado em: {termino.strftime('%H:%M:%S')}")
