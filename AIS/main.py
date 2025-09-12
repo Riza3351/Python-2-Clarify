@@ -239,7 +239,7 @@ def correlacao():
         y = m * x + b,
         #façamos a inclinação multiplicada pelo valor do ponto de dado mais o intercepto gerando nossa linha do grafico
         mode = 'lines', 
-        nome = 'Linha de tendencia', 
+        name = 'Linha de tendencia', 
         line = dict(
             color = 'rgba(220, 53, 69, 1)',
             width = 4,
@@ -251,8 +251,8 @@ def correlacao():
             'text':f'<br><b>Correlação entre Selic e Inadimplencia</b><br><span style="font-size:16px>Coeficiente de Correlação:{correl:.2f}</span>',
             'y':0.95,
             'x':0.5,
-            'yanchor':'center',
-            'xanchor':'top'
+            'yanchor':'top',
+            'xanchor':'center'
 
         },
         xaxis_title = dict(
@@ -281,15 +281,15 @@ def correlacao():
             xanchor = 'center', 
             x = 0.5, 
             bgcolor = 'rgba(0,0,0,0)',
-            borderwith = 0
+            borderwidth = 0
         ), 
         margin = dict(l=60, r=60, t=120, b=60)
     )
-    graph_html = fig.to_html(full_html=False, include_plotly='cdn')
+    graph_html = fig.to_html(full_html=False, include_plotlyjs='cdn')
     return render_template_string('''
         <html>
             <head>
-                <title>Correlação Selic vs Inadimplencia</title>
+                <title>Correlação Selic vs Inadimplencia</title><br>
                 <style>
                     boddy{background-color: #ffffff; color:#333;}
                     h1{margin_top:40px;}
